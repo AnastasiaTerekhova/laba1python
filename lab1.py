@@ -35,12 +35,13 @@ def task_1():
 
 
 def task_2():
-    # генератор списка от 1 до 25 с шагом 2
-    lst = [i for i in range(1, 25, 2)]
-    lst_c = lst.copy()  # копия списка
-    lst_c.sort()  # сортируем копию по умолчанию сортирует по возрастанию
-    # выводит true если списки совпали после сортировки,значит он уже был в порядке возрастания,иначе false
-    print(lst == lst_c)
+    lst = [2, 3, 5, 6, 10]
+    for i, item in enumerate(lst):
+        if i != 0 and lst[i-1] > item:
+            print(False)
+            break
+        if i+1 == len(lst):
+            print(True)
 
 
 # 3
@@ -178,12 +179,9 @@ def task_8():
     # генерируем список длинной n из случайных чисел от 1 до 10
     mass_rand = [random.randint(1, 10) for i in range(n)]
     print("Сгенерированный размер массива: ", len(mass_rand))
-    step = 0
-    while n > 1:  # находим степень числа
-        n /= 2
-        step += 1
     # добовляем столько нулей,сколько нужно
-    [mass_rand.append(0) for i in range(pow(2, step) - len(mass_rand))]
+    [mass_rand.append(0)
+     for i in range(pow(2, ceil(log(n, 2))) - len(mass_rand))]
     print("Новый размер массива,равный степени 2: ", len(mass_rand))
 
 
@@ -202,39 +200,25 @@ def task_8():
 
 def task_9():
     # словарь с количеством купюр и их значениями
-    cash = {"1000": 5, "100": 10, "50": 4, "10": 3, "5": 3, "1": 50}
-    result = ""  # строка для записи в нее результата
+    cash = {"1000": 5, "100": 10, "50": 4, "10": 3}
+    result = {}
+    res = ""  # строка для записи в нее результата
     take_money = int(input("Введите сумму, которую хотите снять: "))
-    s = 0
-    # находим количество денег в банкомате
-    for u in cash.items():
-        s += int(u[0]) * u[1]
-    # проходимся по всем купюрам в банкомате
-    for i in cash.keys():
-        nom = int(i)  # текущий номинал купюры
-        # сколько купюр текущего номенала нам нужно
-        need_kup = int(take_money / nom)
-        if s >= take_money:  # если хватает денег
-            # если нам нужно больше купюр текущего номинала,чем у нас есть
-            if cash.get(i) < need_kup:
-                # то выдаем столько купюр,сколько у нас есть
-                need_kup = cash.get(i)
-            if take_money != 0 and need_kup == 0:  # если нам еще нужны деньги,но у нас нет купюр
-                result = "Недостаточно купюр"
-                break
-            take_money -= need_kup * nom  # отнимаем от суммы которую нужно выдать,то что выдаем
-            # списываем со счета банкомата
-            cash.update({i: int(cash.get(i) - need_kup)})
-            # записываем результаты в строку вывода
-            if take_money == 0:  # если уже нечего снимать, то заканчиваем вывод
-                result += str(need_kup) + " * " + str(nom)
-                break
-            else:  # иначе продолжаем
-                result += str(need_kup) + " * " + str(nom) + " + "
-        else:  # если количество денег в банкомате меньше,чем мы хотим снять
-            result = "Недостаточно денег!"
+    for i in cash.items():
+        if take_money >= int(i[0]) and i[1] > 0:
+            count = take_money//int(i[0])
+            if count > i[1]:
+                count = i[1]
+            result.update({i[0]: count})
+            cash.update({i[0]: cash.get(i[0]) - count})
+            take_money -= count * int(i[0])
+        if take_money == 0:
+            for i in result.items():
+                res += str(i[1]) + " * " + i[0] + " + "
+            print(res[:-2])
             break
-    print(result)
+    if take_money > 0:
+        print("Операция не может быть выполнена!")
 
 
 # 10
@@ -504,7 +488,7 @@ def task_16():
 
 if __name__ == '__main__':
     # task_1()
-    # task_2()
+     task_2()
     # task_3()
     # task_4()
     # task_5()
